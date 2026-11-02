@@ -46,3 +46,13 @@ def test_vip_minimum_amount_boundary_keeps_one_cent():
 
     assert amount_to_charge == pytest.approx(0.01)
     assert order.discount == 0.0
+
+
+def test_vip_rounding_boundary_of_99_99():
+    """CP-06 · Límite · 99.99 VIP: el descuento se redondea a 15.00 y se cobra 84.99."""
+    order = Order(total=99.99, vip=True)
+
+    amount_to_charge = order.confirm()
+
+    assert order.discount == 15.0
+    assert amount_to_charge == pytest.approx(84.99)

@@ -1,0 +1,17 @@
+﻿id,regla,entrada,resultado_esperado,resultado_real,tipo,capa,prueba,estado
+CP-01,Descuento VIP 15%,total=200 VIP,cobro 170; descuento 30; CONFIRMED,cobro 170; descuento 30; CONFIRMED,Éxito,Unitaria,tests/test_order_aaa.py::test_vip_order_of_200_is_charged_170_and_confirmed,PASSED
+CP-02,Cliente regular sin descuento,total=200 regular,cobro 200; descuento 0,cobro 200; descuento 0,Éxito,Unitaria,tests/test_order_aaa.py::test_regular_order_of_200_has_no_discount,PASSED
+CP-03,El total debe ser positivo,total=0 y total=-1,ValueError,ValueError,Error,Unitaria,tests/test_order.py::test_invalid_total,PASSED
+CP-04,La deuda pendiente bloquea la confirmación,total=100; deuda=50,CustomerHasDebt; estado sigue NEW,CustomerHasDebt; estado sigue NEW,Error,Unitaria,tests/test_order_aaa.py::test_customer_with_debt_cannot_confirm_and_order_stays_new,PASSED
+CP-05,Monto mínimo VIP,total=0.01 VIP,cobro 0.01; descuento 0.00,cobro 0.01; descuento 0.00,Límite,Unitaria,tests/test_order_aaa.py::test_vip_minimum_amount_boundary_keeps_one_cent,PASSED
+CP-06,Redondeo del descuento VIP,total=99.99 VIP,descuento 15.00; cobro 84.99,descuento 15.00; cobro 84.99,Límite,Unitaria,tests/test_order_aaa.py::test_vip_rounding_boundary_of_99_99,PASSED
+CP-07,No confirmar un pedido dos veces (TDD),confirm() dos veces,ValueError already confirmed,ValueError already confirmed,Error,Unitaria TDD,tests/test_order.py::test_cannot_confirm_twice,PASSED
+CP-08,Pago aprobado,Mock charge=True; VIP 200,devuelve 170; charge(170) una vez,devuelve 170; charge(170) una vez,Éxito,Mock,tests/test_service_mock_aaa.py::test_approved_payment_charges_170_for_vip_order_of_200,PASSED
+CP-09,Pago rechazado,Mock charge=False; VIP 200,RuntimeError payment rejected; charge(170),RuntimeError payment rejected; charge(170),Error,Mock,tests/test_service_mock_aaa.py::test_rejected_payment_raises_runtime_error_after_charging_170,PASSED
+CP-10,Timeout de la pasarela,Mock side_effect=TimeoutError,TimeoutError se propaga,TimeoutError se propaga,Límite,Mock,tests/test_service_mock_aaa.py::test_gateway_timeout_propagates_to_the_caller,PASSED
+CP-11,Commit persiste el pedido,save(2; Order(250)) + commit,id=2; total=250; status=NEW en sesión nueva,id=2; total=250; status=NEW en sesión nueva,Éxito,Integración SQLite,tests/test_repository_commit_aaa.py::test_committed_order_is_persisted_with_id_total_and_status,PASSED
+CP-12,Rollback descarta el pedido,save(3; Order(80)) + rollback,consulta devuelve None en sesión nueva,consulta devuelve None en sesión nueva,Error,Integración SQLite,tests/test_repository_commit_aaa.py::test_rolled_back_order_is_not_persisted_in_a_new_session,PASSED
+CP-13,El administrador cancela pedido ajeno,NEW; admin; otro dueño,True,True,Éxito,Seguridad,tests/test_security_matrix.py::test_admin_can_cancel_new_order_of_another_user,PASSED
+CP-14,Propietario a las 24h exactas,NEW; propietario; 24h,False,False,Límite,Seguridad,tests/test_security_matrix.py::test_owner_cannot_cancel_at_exactly_24_hours,PASSED
+CP-15,SHIPPED nunca se cancela,SHIPPED; admin,False,False,Error,Seguridad,tests/test_security_matrix.py::test_authorization_matrix,PASSED
+CP-16,Propietario a 23h 59m 59s,NEW; propietario; 23:59:59,True,True,Límite,Seguridad,tests/test_security_matrix.py::test_owner_can_cancel_one_second_before_24_hours,PASSED
