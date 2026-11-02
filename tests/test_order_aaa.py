@@ -13,7 +13,7 @@ def test_vip_order_of_200_is_charged_170_and_confirmed():
     amount_to_charge = order.confirm()
 
     # Assert
-    assert amount_to_charge == 171
+    assert amount_to_charge == 170
     assert order.discount == 30
     assert order.status == "CONFIRMED"
 
